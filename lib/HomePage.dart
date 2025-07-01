@@ -407,7 +407,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     builder: (_) => Padding(
                       padding: MediaQuery.of(context).viewInsets,
-                      child: IAPBottomSheet(),
+                      // child: IAPBottomSheet(),
                     ),
                   );
                 },

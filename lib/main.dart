@@ -21,11 +21,10 @@ import 'ThemeProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await InAppPurchase.instance.isAvailable();
+  // await InAppPurchase.instance.isAvailable();
 
   final themeProvider = ThemeProvider();
   await themeProvider.loadTheme();
-
 
   runApp(
     ChangeNotifierProvider(
@@ -1038,7 +1037,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         builder: (_) => Padding(
                           padding: MediaQuery.of(context).viewInsets,
-                          child: IAPBottomSheet(),
+                          // child: IAPBottomSheet(),
                         ),
                       );
                       // You would typically call your in-app purchase flow here

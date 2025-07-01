@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
@@ -20,18 +21,47 @@ import 'ThemeProvider.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    // runZonedGuarded(() async {
+    //   WidgetsFlutterBinding.ensureInitialized();
+    //   // ... rest of initialization
+    // }, (error, stack) {
+    //   debugPrint("Zone error: $error\n$stack");
+    // });
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Initialize critical plugins first
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    // Load theme synchronously if possible
+    final themeProvider = ThemeProvider();
+    await themeProvider.loadTheme();
+
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => themeProvider,
+        child: const MyApp(),
+      ),
+    );
+  } catch (e, stack) {
+    debugPrint("App initialization failed: $e\n$stack");
+    // Optionally show an error screen
+    runApp(const ErrorApp());
+  }
+
+  // WidgetsFlutterBinding.ensureInitialized();
   // await InAppPurchase.instance.isAvailable();
 
-  final themeProvider = ThemeProvider();
-  await themeProvider.loadTheme();
-
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => themeProvider,
-      child: const MyApp(),
-    ),
-  );
+  // final themeProvider = ThemeProvider();
+  // await themeProvider.loadTheme();
+  //
+  // runApp(
+  //   ChangeNotifierProvider(
+  //     create: (context) => themeProvider,
+  //     child: const MyApp(),
+  //   ),
+  // );
 }
 // void main() {
 //   runApp(
@@ -1112,3 +1142,15 @@ Map<int, String> extractFootnotes(String markdown) {
   return footnotes;
 }
 
+class ErrorApp extends StatelessWidget {
+  const ErrorApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(child: Text('Initialization failed. Please restart the app.')),
+      ),
+    );
+  }
+}

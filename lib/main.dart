@@ -21,6 +21,7 @@ import 'ThemeProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await InAppPurchase.instance.isAvailable();
 
   final themeProvider = ThemeProvider();
   await themeProvider.loadTheme();
@@ -275,7 +276,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     valueListenable: ip,
                     builder: (context, ipx, _) {
                       return Expanded(
-
                         child: Directionality(
                           textDirection: TextDirection.rtl,
                           child: PageView.builder(
@@ -294,7 +294,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               final combinedFootnotes = extractFootnotes(Utils.bookPages.values.elementAt(index)).entries
                                   .map((entry) => '${entry.key}. ${entry.value.replaceAll(":", "")}')
                                   .join('\n');
-
                               return Container(
                                 color: Theme.of(context).colorScheme.onSecondary,
                                 child: Container(
@@ -324,7 +323,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                             fontFamily: 'mitra_bold',
                                             color: Colors.white,
                                             // color: abc,
-
                                           ),
                                         ),
                                       ),
@@ -355,7 +353,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     //   decoration: TextDecoration
                                                     //       .none, // Remove underline globally
                                                     // ),
-
                                                     p: TextStyle(
                                                       fontFamily: 'mitra_regular',
                                                       fontSize: sizes['size1'],

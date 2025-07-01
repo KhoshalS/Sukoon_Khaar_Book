@@ -230,12 +230,12 @@ class _HomePageState extends State<HomePage> {
                           backgroundColor: Color(0xf2d8d0b8),
                         ),
                         onPressed: () {
-                          final selectedPage = Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => FavoritePagesScreen(),
-                            ),
-                          );
+                          // final selectedPage = Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => FavoritePagesScreen(),
+                          //   ),
+                          // );
                         },
                         child: Text(
                           'نښه شوې پاڼې',

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // final brightness = MediaQuery.of(context).platformBrightness;
     // isDarkMode = brightness == Brightness.dark;
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    //final themeProvider = Provider.of<ThemeProvider>(context);
 
     bool isDarkMode = ThemeProvider.isDark;
     print("X_$isDarkMode");
@@ -287,10 +287,10 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: () {
-                    themeProvider.setThemeMode(!isDarkMode);
-                    setState(() {
-                      isDarkMode = !isDarkMode;
-                    });
+                    // themeProvider.setThemeMode(!isDarkMode);
+                    // setState(() {
+                    //   isDarkMode = !isDarkMode;
+                    // });
                   },
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),

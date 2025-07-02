@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -19,50 +20,160 @@ import 'HomePage.dart';
 import 'IAPScreen.dart';
 import 'ThemeProvider.dart';
 
+// void main() async {
+//   // 1. First initialize Flutter bindings
+//   WidgetsFlutterBinding.ensureInitialized();
+//
+//   // 2. Then run the app with proper error handling
+//   runZonedGuarded(() async {
+//     try {
+//       // Initialize critical plugins
+//       await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+//
+//       // Load theme
+//       final themeProvider = ThemeProvider();
+//       await themeProvider.loadTheme();
+//
+//       runApp(
+//         ChangeNotifierProvider(
+//           create: (context) => themeProvider,
+//           child: const MyApp(),
+//         ),
+//       );
+//     } catch (e, stack) {
+//       debugPrint("App initialization failed: $e\n$stack");
+//       // Show error UI immediately
+//       runApp(const ErrorApp(error: "ERROR1"));
+//     }
+//   }, (error, stack) {
+//     debugPrint("Zone error: $error\n$stack");
+//     runApp(const ErrorApp(error: "ERROR2"));
+//   });
+// }
+void main() {
+  // 1. Initialize bindings in root zone
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() async {
+  // 2. Set up error handling
+  final FlutterExceptionHandler? originalOnError = FlutterError.onError;
 
+  FlutterError.onError = (details) {
+    debugPrint('Flutter error: ${details.exception}\n${details.stack}');
+    originalOnError?.call(details);
+  };
+
+  // 3. Run app with error handling
+  runApp(
+    FutureBuilder(
+      future: _initializeApp(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorApp(error: snapshot.error.toString());
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return snapshot.data!;
+        }
+        return const LoadingApp();
+      },
+    ),
+  );
+}
+
+Future<Widget> _initializeApp() async {
   try {
-    // runZonedGuarded(() async {
-    //   WidgetsFlutterBinding.ensureInitialized();
-    //   // ... rest of initialization
-    // }, (error, stack) {
-    //   debugPrint("Zone error: $error\n$stack");
-    // });
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // Initialize critical plugins first
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-    // Load theme synchronously if possible
     final themeProvider = ThemeProvider();
     await themeProvider.loadTheme();
 
-    runApp(
-      ChangeNotifierProvider(
-        create: (context) => themeProvider,
-        child: const MyApp(),
-      ),
+    return ChangeNotifierProvider(
+      create: (context) => themeProvider,
+      child: const MyApp(),
     );
   } catch (e, stack) {
-    debugPrint("App initialization failed: $e\n$stack");
-    // Optionally show an error screen
-    runApp(const ErrorApp());
+    debugPrint("Initialization failed: $e\n$stack");
+    return ErrorApp(error: e.toString());
   }
-
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await InAppPurchase.instance.isAvailable();
-
-  // final themeProvider = ThemeProvider();
-  // await themeProvider.loadTheme();
-  //
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (context) => themeProvider,
-  //     child: const MyApp(),
-  //   ),
-  // );
 }
+// void main() async {
+//
+//   try {
+//     // runZonedGuarded(() async {
+//     //   WidgetsFlutterBinding.ensureInitialized();
+//     //   // ... rest of initialization
+//     // }, (error, stack) {
+//     //   debugPrint("Zone error: $error\n$stack");
+//     // });
+//     await _initializePlugins();
+//     runApp(
+//       FutureBuilder(
+//         future: _initializeApp(),
+//         builder: (context, snapshot) {
+//           if (snapshot.hasError) {
+//             return ErrorApp(error: snapshot.error);
+//           }
+//           return snapshot.hasData ? snapshot.data! : LoadingApp();
+//         },
+//       ),
+//     );
+//
+//
+//
+//
+//   //
+//   //   WidgetsFlutterBinding.ensureInitialized();
+//   //
+//   //   // Initialize critical plugins first
+//   //   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+//   //
+//   //   // Load theme synchronously if possible
+//   //   final themeProvider = ThemeProvider();
+//   //   await themeProvider.loadTheme();
+//   //
+//   //   runApp(
+//   //     ChangeNotifierProvider(
+//   //       create: (context) => themeProvider,
+//   //       child: const MyApp(),
+//   //     ),
+//   //   );
+//   } catch (e, stack) {
+//     debugPrint("App initialization failed: $e\n$stack");
+//     // Optionally show an error screen
+//     runApp(ErrorApp( error: "ERRORRZ",));
+//   }
+//
+//
+// }
+
+Future<void> _initializePlugins() async {
+  try {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // Explicitly initialize path_provider if needed
+    // await PathProviderPlatform.instance.initialize();
+  } catch (e, stack) {
+    debugPrint("Plugin initialization failed: $e\n$stack");
+    rethrow;
+  }
+}
+// Future<Widget> _initializeApp() async {
+//   try {
+//     final themeProvider = ThemeProvider();
+//     await themeProvider.loadTheme();
+//
+//     return ChangeNotifierProvider(
+//       create: (context) => themeProvider,
+//       child: const MyApp(),
+//     );
+//   } catch (e, stack) {
+//     debugPrint("App initialization failed: $e\n$stack");
+//     return ErrorApp(error: e);
+//   }
+// }
+
+
+
+
+
+
 // void main() {
 //   runApp(
 //     ChangeNotifierProvider(
@@ -1143,13 +1254,50 @@ Map<int, String> extractFootnotes(String markdown) {
 }
 
 class ErrorApp extends StatelessWidget {
-  const ErrorApp({super.key});
+  final dynamic error;
+
+  const ErrorApp({super.key, required this.error});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(child: Text('Initialization failed. Please restart the app.')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Initialization Error', style: TextStyle(fontSize: 24)),
+              SizedBox(height: 20),
+              Text(error.toString()),
+              SizedBox(height: 40),
+              ElevatedButton(
+                child: Text('Restart App'),
+                onPressed: () => main(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+class LoadingApp extends StatelessWidget {
+  const LoadingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text('Loading...', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+        ),
       ),
     );
   }

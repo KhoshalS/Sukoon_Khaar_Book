@@ -1,7 +1,7 @@
 import Flutter
 import UIKit
 
-import path_provider_foundation
+// import path_provider_foundation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,7 +9,7 @@ import path_provider_foundation
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-      let _ = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//       let _ = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

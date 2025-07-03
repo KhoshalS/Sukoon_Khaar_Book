@@ -179,7 +179,9 @@ void main() {
   //     child: const MyApp(),
   //   ),
   // );
-  runApp(const MyApp());
+
+  runApp(ErrorApp(error: "Is a Blank App"));
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

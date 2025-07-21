@@ -20,6 +20,81 @@ import 'HomePage.dart';
 import 'IAPScreen.dart';
 import 'ThemeProvider.dart';
 
+
+Future<Widget> _initializeApp() async {
+  try {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    final themeProvider = ThemeProvider();
+    await themeProvider.loadTheme();
+
+    return ChangeNotifierProvider(
+      create: (context) => themeProvider,
+      child: const MyApp(),
+    );
+  } catch (e, stack) {
+    debugPrint("Initialization failed: $e\n$stack");
+    return ErrorApp(error: e.toString());
+  }
+}
+
+
+void main() async {
+
+  try {
+    // runZonedGuarded(() async {
+    //   WidgetsFlutterBinding.ensureInitialized();
+    //   // ... rest of initialization
+    // }, (error, stack) {
+    //   debugPrint("Zone error: $error\n$stack");
+    // });
+    await _initializePlugins();
+    runApp(
+      FutureBuilder(
+        future: _initializeApp(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return ErrorApp(error: snapshot.error);
+          }
+          return snapshot.hasData ? snapshot.data! : LoadingApp();
+        },
+      ),
+    );
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Initialize critical plugins first
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    // Load theme synchronously if possible
+    final themeProvider = ThemeProvider();
+    await themeProvider.loadTheme();
+
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => themeProvider,
+        child: const MyApp(),
+      ),
+    );
+  } catch (e, stack) {
+    debugPrint("App initialization failed: $e\n$stack");
+    // Optionally show an error screen
+    runApp(ErrorApp( error: "ERRORRZ",));
+  }
+
+
+}
+
+Future<void> _initializePlugins() async {
+  try {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // Explicitly initialize path_provider if needed
+    // await PathProviderPlatform.instance.initialize();
+  } catch (e, stack) {
+    debugPrint("Plugin initialization failed: $e\n$stack");
+    rethrow;
+  }
+}
+
 // void main() async {
 //   // 1. First initialize Flutter bindings
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -80,82 +155,7 @@ import 'ThemeProvider.dart';
 //     ),
 //   );
 // }
-
-Future<Widget> _initializeApp() async {
-  try {
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    final themeProvider = ThemeProvider();
-    await themeProvider.loadTheme();
-
-    return ChangeNotifierProvider(
-      create: (context) => themeProvider,
-      child: const MyApp(),
-    );
-  } catch (e, stack) {
-    debugPrint("Initialization failed: $e\n$stack");
-    return ErrorApp(error: e.toString());
-  }
-}
-// void main() async {
 //
-//   try {
-//     // runZonedGuarded(() async {
-//     //   WidgetsFlutterBinding.ensureInitialized();
-//     //   // ... rest of initialization
-//     // }, (error, stack) {
-//     //   debugPrint("Zone error: $error\n$stack");
-//     // });
-//     await _initializePlugins();
-//     runApp(
-//       FutureBuilder(
-//         future: _initializeApp(),
-//         builder: (context, snapshot) {
-//           if (snapshot.hasError) {
-//             return ErrorApp(error: snapshot.error);
-//           }
-//           return snapshot.hasData ? snapshot.data! : LoadingApp();
-//         },
-//       ),
-//     );
-//
-//
-//
-//
-//   //
-//   //   WidgetsFlutterBinding.ensureInitialized();
-//   //
-//   //   // Initialize critical plugins first
-//   //   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-//   //
-//   //   // Load theme synchronously if possible
-//   //   final themeProvider = ThemeProvider();
-//   //   await themeProvider.loadTheme();
-//   //
-//   //   runApp(
-//   //     ChangeNotifierProvider(
-//   //       create: (context) => themeProvider,
-//   //       child: const MyApp(),
-//   //     ),
-//   //   );
-//   } catch (e, stack) {
-//     debugPrint("App initialization failed: $e\n$stack");
-//     // Optionally show an error screen
-//     runApp(ErrorApp( error: "ERRORRZ",));
-//   }
-//
-//
-// }
-
-Future<void> _initializePlugins() async {
-  try {
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    // Explicitly initialize path_provider if needed
-    // await PathProviderPlatform.instance.initialize();
-  } catch (e, stack) {
-    debugPrint("Plugin initialization failed: $e\n$stack");
-    rethrow;
-  }
-}
 // Future<Widget> _initializeApp() async {
 //   try {
 //     final themeProvider = ThemeProvider();
@@ -172,17 +172,17 @@ Future<void> _initializePlugins() async {
 // }
 
 
-void main() {
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (_) => ThemeProvider(),
-  //     child: const MyApp(),
-  //   ),
-  // );
-
-  runApp(ErrorApp(error: "Is a Blank App"));
-  // runApp(const MyApp());
-}
+// void main() {
+//   runApp(
+//     ChangeNotifierProvider(
+//       create: (_) => ThemeProvider(),
+//       child: const MyApp(),
+//     ),
+//   );
+//
+//   // runApp(ErrorApp(error: "Is a Blank App"));
+//   // runApp(const MyApp());
+// }
 
 class MyApp extends StatelessWidget {
 
